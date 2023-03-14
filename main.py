@@ -33,8 +33,8 @@ class Enemy():
 
 # Start the game
 pygame.init()
-game_width = 1920
-game_height = 1080
+game_width = 1400
+game_height = 1000
 screen = pygame.display.set_mode((game_width, game_height))
 clock = pygame.time.Clock()
 running = True
@@ -44,11 +44,11 @@ background = pygame.image.load('background.png')
 player = pygame.image.load("bird.png")
 
 # Creating the player's variables
-player_x = 80
+player_x = 0
 
-player_y = 700
+player_y = 800
 
-player_speed = 4
+player_speed = 2
 
 player_size = 160
 
@@ -60,8 +60,8 @@ player_alive =  True
 isjump = False
    
 # Force (v) up and mass m.
-v = 10
-m = 1
+#v = 10
+#m = 1
 # Make some variables for the HUD (heads-up display)
 
 score = 0
@@ -77,7 +77,8 @@ score_text = score_font.render("Score: "+str(score), 1, (255, 255, 255))
 # Make enemy array
 #enemies = []
 
-
+dbclock = pygame.time.Clock()
+DOUBLECLICKTIME = 1000
 
 # Everything under 'while running' will be repeated over and over again
 while running:
@@ -89,51 +90,12 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             running = False
-
-    if isjump == False:
-        # if space bar is pressed
-        if keys[pygame.K_w]:
-                  
-            # make isjump equal to True
-            isjump = True
-           
-    if isjump:
-        # calculate force (F). F = 1 / 2 * mass * velocity ^ 2.
-        F =(1 / 2)*m*(v**2)
-        print(F, "f", m, "m", v, "v")
-        #print(v, "")
-        # change in the y co-ordinate
-        player_y-= F
-           
-        # decreasing velocity while going up and become negative while coming down
-        v = v-1
-           
-        # object reached its maximum height
-        if v<0:
-               
-            # negative sign is added to counter negative velocity
-            m =-1
-   
-        # objected reaches its original state
-        if v ==-6:
-   
-            # making isjump equal to false 
-            isjump = False
-  
-     
-            # setting original values to v and m
-            v = 10
-            m = 1
-       
-    # creates time delay of 10ms
-    pygame.time.delay(10)
-# Check to see what keys user is pressing
-    #if keys[pygame.K_w]:
-       # player_y -= 10
-       # #time.sleep(1)
-       # player_y += 10
-
-        
+            '''
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
+            if dbclock.tick() < DOUBLECLICKTIME:
+                player_x += 5
+                player_facing_left = False
+            '''
     if keys[pygame.K_a]:
         player_x -= player_speed
         player_facing_left = True
@@ -141,17 +103,23 @@ while running:
     if keys[pygame.K_s]:
         pass
         #player_y += player_speed
-
+    if keys[pygame.K_LSHIFT]:
+        if keys[pygame.K_d]:
+            player_x += player_speed*2
+            player_facing_left = False
+        if keys[pygame.K_a]:
+            player_x -= player_speed*1.
+            player_facing_left = True
     if keys[pygame.K_d]:
         player_x += player_speed
         player_facing_left = False
-
+    '''
     if keys [pygame.K_SPACE]:
         player_size += 2
 
     if keys [pygame.K_k]:
         player_size -= 2
-
+    '''
     screen.blit(background, (0, 0))
 
     # Spawn a new Enemy whenever enemy_timer hits 0
