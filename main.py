@@ -2,6 +2,7 @@
 import pygame
 import random
 import time
+import asyncio
 '''
 # Set up how the enemy thinks
 class Enemy():
@@ -58,7 +59,6 @@ player_hitbox = pygame.Rect(player_x, player_y, int(player_size*1.25), player_si
 
 player_alive =  True
 isjump = False
-   
 # Force (v) up and mass m.
 #v = 10
 #m = 1
@@ -79,114 +79,116 @@ score_text = score_font.render("Score: "+str(score), 1, (255, 255, 255))
 
 dbclock = pygame.time.Clock()
 DOUBLECLICKTIME = 1000
-
+async def main(screen, running, background, player, player_x, player_y, player_speed, player_size, player_facing_left, player_hitbox, player_alive, isjump):
 # Everything under 'while running' will be repeated over and over again
-while running:
-    keys = pygame.key.get_pressed()
+    while running:
+        keys = pygame.key.get_pressed()
 
-    # Makes the game stop if the player clicks the X or presses esc
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            running = False
-            '''
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
-            if dbclock.tick() < DOUBLECLICKTIME:
-                player_x += 5
-                player_facing_left = False
-            '''
-    if keys[pygame.K_a]:
-        player_x -= player_speed
-        player_facing_left = True
-
-    if keys[pygame.K_s]:
-        pass
-        #player_y += player_speed
-    if keys[pygame.K_LSHIFT]:
-        if keys[pygame.K_d]:
-            player_x += player_speed*2
-            player_facing_left = False
+        # Makes the game stop if the player clicks the X or presses esc
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                running = False
+                '''
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_d:
+                if dbclock.tick() < DOUBLECLICKTIME:
+                    player_x += 5
+                    player_facing_left = False
+                '''
         if keys[pygame.K_a]:
-            player_x -= player_speed*1.
+            player_x -= player_speed
             player_facing_left = True
-    if keys[pygame.K_d]:
-        player_x += player_speed
-        player_facing_left = False
-    '''
-    if keys [pygame.K_SPACE]:
-        player_size += 2
 
-    if keys [pygame.K_k]:
-        player_size -= 2
-    '''
-    screen.blit(background, (0, 0))
+        if keys[pygame.K_s]:
+            pass
+            #player_y += player_speed
+        if keys[pygame.K_LSHIFT]:
+            if keys[pygame.K_d]:
+                player_x += player_speed*2
+                player_facing_left = False
+            if keys[pygame.K_a]:
+                player_x -= player_speed*1.
+                player_facing_left = True
+        if keys[pygame.K_d]:
+            player_x += player_speed
+            player_facing_left = False
+        '''
+        if keys [pygame.K_SPACE]:
+            player_size += 2
 
-    # Spawn a new Enemy whenever enemy_timer hits 0
-    '''
-    enemy_timer -= 1
-    if enemy_timer <= 0:
-        new_enemy_y = random.randint(0, game_height)
+        if keys [pygame.K_k]:
+            player_size -= 2
+        '''
+        screen.blit(background, (0, 0))
 
-        new_enemy_speed = random.randint(1, 6)
+        # Spawn a new Enemy whenever enemy_timer hits 0
+        '''
+        enemy_timer -= 1
+        if enemy_timer <= 0:
+            new_enemy_y = random.randint(0, game_height)
 
-        new_enemy_size = random.randint(player_size/2, player_size*2)
+            new_enemy_speed = random.randint(1, 6)
 
-
-        if random.randint(0, 1) == 0:
-            enemies.append(Enemy(-new_enemy_size*2, new_enemy_y, new_enemy_speed, new_enemy_size))
-
-        else:
-            enemies.append(Enemy(game_width, new_enemy_y, -new_enemy_speed, new_enemy_size))
-        enemy_timer = enemy_timer_max
+            new_enemy_size = random.randint(player_size/2, player_size*2)
 
 
-    # Update all enemies
-    for enemy in enemies:
-        enemy.update(screen)
-    '''
-    if player_alive:
-        # Update Player Hitbox
-        player_hitbox.x = player_x
-        player_hitbox.y = player_y
-        player_hitbox.width = int(player_size * 1.25)
-        player_hitbox.height = player_size
-        pygame.draw.rect(screen, (255, 255, 255), player_hitbox)
+            if random.randint(0, 1) == 0:
+                enemies.append(Enemy(-new_enemy_size*2, new_enemy_y, new_enemy_speed, new_enemy_size))
+
+            else:
+                enemies.append(Enemy(game_width, new_enemy_y, -new_enemy_speed, new_enemy_size))
+            enemy_timer = enemy_timer_max
+
+
+        # Update all enemies
+        for enemy in enemies:
+            enemy.update(screen)
+        '''
+        if player_alive:
+            # Update Player Hitbox
+            player_hitbox.x = player_x
+            player_hitbox.y = player_y
+            player_hitbox.width = int(player_size * 1.25)
+            player_hitbox.height = player_size
+            pygame.draw.rect(screen, (255, 255, 255), player_hitbox)
+            '''
+
+            # Check to see when a player hits a enemy
+            for enemy in enemies:
+                if player_hitbox.colliderect(enemy.hitbox):
+                    if player_size >= enemy.size:
+                        score += enemy.size
+                        player_size += 10
+                        enemies.remove(enemy)
+
+                    else:
+                        player_alive = False
+
+
         '''
 
-        # Check to see when a player hits a enemy
-        for enemy in enemies:
-            if player_hitbox.colliderect(enemy.hitbox):
-                if player_size >= enemy.size:
-                    score += enemy.size
-                    player_size += 10
-                    enemies.remove(enemy)
+            # Draw Player
+            player_small = pygame.transform.scale(player, (int(player_size*1.25), player_size))
+            if player_facing_left:
+                player_small = pygame.transform.flip(player_small, True, False)
+            screen.blit(player_small, (player_x, player_y))
+        '''
+        # Changes what the score says depending on the player(if alive then shows score, if got eaten then says final score)
+        if player_alive:
+            score_text = score_font.render("Score: " + str(score), 1, (0, 0, 0))
 
-                else:
-                    player_alive = False
+        else:
+            score_text = score_font.render("Final Score: " + str(score), 1, (0, 0, 0))
 
+        '''
+        screen.blit(score_text, (1600, 30))
+        await asyncio.sleep(0)  # Very important, and keep it 0
 
-      '''
-
-        # Draw Player
-        player_small = pygame.transform.scale(player, (int(player_size*1.25), player_size))
-        if player_facing_left:
-            player_small = pygame.transform.flip(player_small, True, False)
-        screen.blit(player_small, (player_x, player_y))
-
-    # Changes what the score says depending on the player(if alive then shows score, if got eaten then says final score)
-    if player_alive:
-        score_text = score_font.render("Score: " + str(score), 1, (0, 0, 0))
-
-    else:
-        score_text = score_font.render("Final Score: " + str(score), 1, (0, 0, 0))
+        # Update Screen
+        pygame.display.flip()
+        clock.tick(1000)
+        pygame.display.set_caption("FPS: " + str(clock.get_fps()))
 
 
-    screen.blit(score_text, (1600, 30))
-
-    # Update Screen
-    pygame.display.flip()
-    clock.tick(1000)
-    pygame.display.set_caption("FPS: " + str(clock.get_fps()))
-
-
+asyncio.run(main(pygame.display.set_mode((game_width, game_height)), True, pygame.image.load('background.png'), pygame.image.load("bird.png"), 0, 800, 2, 160, False, pygame.Rect(player_x, player_y, int(player_size*1.25), player_size), True, False))
