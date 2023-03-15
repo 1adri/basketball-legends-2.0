@@ -109,7 +109,7 @@ async def main(screen, running, background, player, player_x, player_y, player_s
         # Update Screen
         pygame.display.flip()
         clock.tick(50)
-        pygame.display.set_caption("FPS: " + str(clock.get_fps()))
+        #pygame.display.set_caption("FPS: " + str(clock.get_fps()))
 
 print(game_width)                                                                                                               
 asyncio.run(main(pygame.display.set_mode((game_width, game_height)), True, pygame.image.load('background.png').convert_alpha(), pygame.image.load('bird.png').convert_alpha(), 200, 370, 3, 160, False, pygame.Rect(player_x, player_y, int(player_size*1.25), player_size), True, False, False, 0.5, 12, 12))
