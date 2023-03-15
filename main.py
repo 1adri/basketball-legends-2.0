@@ -17,8 +17,8 @@ import sys
 
 # Start the game
 pygame.init()
-game_width = 1280
-game_height = 720
+game_width = 960
+game_height = 540
 screen = pygame.display.set_mode((game_width, game_height))
 clock = pygame.time.Clock()
 running = True
@@ -68,10 +68,10 @@ async def main(screen, running, background, player, player_x, player_y, player_s
             #player_y += player_speed
         if keys[pygame.K_LSHIFT]:
             if keys[pygame.K_d]:
-                player_x += 1.5
+                player_x += 3.5
                 #player_facing_left = False
             if keys[pygame.K_a]:
-                player_x -= 1.5
+                player_x -= 3.5
                 #player_facing_left = True
         if keys[pygame.K_d]:
             player_x += player_speed
@@ -97,7 +97,7 @@ async def main(screen, running, background, player, player_x, player_y, player_s
         screen.blit(player, (player_x, player_y))
         '''
         # Draw Player
-        player_small = pygame.transform.scale(player, (int(player_size), int(player_size)))
+        player_small = pygame.transform.scale(player, (int(player_size*.7), int(player_size*.7)))
         if player_facing_left:
             player_small = pygame.transform.flip(player_small, True, False)
         screen.blit(player_small, (player_x, player_y))
@@ -108,9 +108,9 @@ async def main(screen, running, background, player, player_x, player_y, player_s
 
         # Update Screen
         pygame.display.flip()
-        clock.tick(1000)
+        clock.tick(50)
         pygame.display.set_caption("FPS: " + str(clock.get_fps()))
 
-                                                                                                                                            
-asyncio.run(main(pygame.display.set_mode((game_width, game_height)), True, pygame.image.load('background.png').convert_alpha(), pygame.image.load('bird.png').convert_alpha(), 150, 500, 1, 160, False, pygame.Rect(player_x, player_y, int(player_size*1.25), player_size), True, False, False, 0.1, 7, 7))
+print(game_width)                                                                                                               
+asyncio.run(main(pygame.display.set_mode((game_width, game_height)), True, pygame.image.load('background.png').convert_alpha(), pygame.image.load('bird.png').convert_alpha(), 200, 370, 3, 160, False, pygame.Rect(player_x, player_y, int(player_size*1.25), player_size), True, False, False, 0.5, 12, 12))
 #async def main(screen, running, background, player, player_x, player_y, player_speed, player_size, player_facing_left, player_hitbox, player_alive, isjump):
