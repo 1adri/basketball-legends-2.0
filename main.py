@@ -34,8 +34,8 @@ class Enemy():
 
 # Start the game
 pygame.init()
-game_width = 1400
-game_height = 1000
+game_width = 1920
+game_height = 1080
 screen = pygame.display.set_mode((game_width, game_height))
 clock = pygame.time.Clock()
 running = True
